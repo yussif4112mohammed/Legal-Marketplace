@@ -1,0 +1,84 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    @apply bg-white text-navy-950 antialiased;
+  }
+  h1, h2, h3, h4 { font-family: 'Playfair Display', Georgia, serif; }
+}
+
+@layer components {
+  /* Buttons */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl
+           font-medium text-sm transition-all duration-200
+           disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none
+           focus-visible:ring-2 focus-visible:ring-offset-2;
+  }
+  .btn-primary {
+    @apply btn bg-navy-900 text-white hover:bg-navy-800 active:bg-navy-950
+           focus-visible:ring-navy-700;
+  }
+  .btn-gold {
+    @apply btn bg-gold-500 text-navy-950 hover:bg-gold-400 active:bg-gold-600
+           focus-visible:ring-gold-500 font-semibold;
+  }
+  .btn-outline {
+    @apply btn border-2 border-navy-900 text-navy-900
+           hover:bg-navy-900 hover:text-white focus-visible:ring-navy-700;
+  }
+  .btn-ghost {
+    @apply btn text-navy-700 hover:bg-navy-50 focus-visible:ring-navy-500;
+  }
+
+  /* Cards */
+  .card {
+    @apply bg-white rounded-2xl shadow-card border border-gray-100
+           transition-shadow duration-300 hover:shadow-card-lg;
+  }
+
+  /* Form elements */
+  .input {
+    @apply w-full px-4 py-3 rounded-xl border border-gray-200 bg-white
+           text-navy-950 placeholder:text-gray-400
+           focus:outline-none focus:ring-2 focus:ring-navy-900/25 focus:border-navy-900
+           transition-all duration-200 text-sm;
+  }
+  .label {
+    @apply block text-sm font-medium text-navy-900 mb-1.5;
+  }
+  .form-error {
+    @apply text-xs text-red-600 mt-1;
+  }
+
+  /* Badges */
+  .badge {
+    @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+  .badge-gold   { @apply badge bg-amber-100 text-amber-800; }
+  .badge-green  { @apply badge bg-green-100 text-green-800; }
+  .badge-blue   { @apply badge bg-blue-100 text-blue-800; }
+  .badge-red    { @apply badge bg-red-100 text-red-800; }
+  .badge-gray   { @apply badge bg-gray-100 text-gray-700; }
+  .badge-navy   { @apply badge bg-navy-100 text-navy-800; }
+
+  /* Page section */
+  .section { @apply py-16 md:py-24; }
+  .section-title {
+    @apply text-3xl md:text-4xl font-bold text-navy-950;
+    font-family: 'Playfair Display', serif;
+  }
+  .container-lg { @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8; }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar       { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: #f1f5f9; }
+::-webkit-scrollbar-thumb { background: #c7d2fe; border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: #1e2787; }
