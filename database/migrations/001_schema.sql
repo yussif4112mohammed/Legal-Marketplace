@@ -3,10 +3,10 @@
 -- Run: node database/migrate.js
 -- ============================================================
 
-CREATE DATABASE IF NOT EXISTS legal_marketplace
+CREATE DATABASE IF NOT EXISTS railway
   CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-USE legal_marketplace;
+USE railway;
 
 -- ============================================================
 -- USERS (base table for all roles)
