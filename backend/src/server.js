@@ -18,7 +18,6 @@ const adminRoutes           = require('./routes/admin');
 const specializationsRoutes = require('./routes/specializations');
 
 const app  = express();
-const app = express();
 app.set('trust proxy', 1);
 const PORT = process.env.PORT || 5000;
 
