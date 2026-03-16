@@ -24,11 +24,18 @@ const PORT = process.env.PORT || 5000;
 // ─── Security Middleware ──────────────────────────────────────
 app.use(helmet());
 app.use(cors({
-  origin: [
-    'http://localhost:3000',
-    'https://lexbridge-ten.vercel.app',
-    process.env.FRONTEND_URL,
-  ].filter(Boolean),
+  origin: function(origin, callback) {
+    const allowed = [
+      'http://localhost:3000',
+      'https://lexbridge-ten.vercel.app',
+      process.env.FRONTEND_URL,
+    ].filter(Boolean);
+    if (!origin || allowed.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
