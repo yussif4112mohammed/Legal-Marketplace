@@ -27,7 +27,7 @@ app.use(cors({
   origin: function(origin, callback) {
     const allowed = [
       'http://localhost:3000',
-      'https://lexbridge-ten.vercel.app',
+      'https://lexibridge-ten.vercel.app',
       process.env.FRONTEND_URL,
     ].filter(Boolean);
     if (!origin || allowed.includes(origin)) {
