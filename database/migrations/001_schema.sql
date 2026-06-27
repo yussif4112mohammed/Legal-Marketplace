@@ -3,10 +3,10 @@
 -- Run: node database/migrate.js
 -- ============================================================
 
-CREATE DATABASE IF NOT EXISTS railway
+CREATE DATABASE IF NOT EXISTS __DBNAME__
   CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-USE railway;
+USE __DBNAME__;
 
 -- ============================================================
 -- USERS (base table for all roles)
@@ -224,10 +224,13 @@ CREATE TABLE IF NOT EXISTS notifications (
 
 -- ============================================================
 -- DEFAULT ADMIN  (password: Admin@123456 — CHANGE THIS)
+-- This hash was actually generated with bcrypt.hashSync('Admin@123456', 12)
+-- and verified to match. The previous hash here was a placeholder that
+-- never matched any real password, which is why admin login always failed.
 -- ============================================================
 INSERT IGNORE INTO users (email, password_hash, role, first_name, last_name)
 VALUES (
   'admin@legalmarket.com',
-  '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewYp7DJg8bVBqQ2W',
+  '$2b$12$sWN5Crf1c5V5RGtWMnRzcePtiRJTz6ofT0FbyLdIyqo4KW7PLrATS',
   'admin', 'Admin', 'User'
 );

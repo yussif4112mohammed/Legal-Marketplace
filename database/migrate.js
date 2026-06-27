@@ -10,12 +10,16 @@ const path  = require('path');
 async function migrate() {
   console.log('🔗 Connecting to MySQL...');
 
+  const sslConfig = process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : undefined;
+  const dbName = process.env.DB_NAME || 'legal_marketplace';
+
   const conn = await mysql.createConnection({
     host:               process.env.DB_HOST     || 'localhost',
     port:               Number(process.env.DB_PORT || 3306),
     user:               process.env.DB_USER     || 'root',
     password:           process.env.DB_PASSWORD || '',
     multipleStatements: true,
+    ...(sslConfig ? { ssl: sslConfig } : {}),
   });
 
   console.log('✅ Connected!\n');
@@ -27,7 +31,7 @@ async function migrate() {
 
   for (const file of files) {
     const filePath = path.join(migrationsDir, file);
-    const sql = fs.readFileSync(filePath, 'utf8');
+    const sql = fs.readFileSync(filePath, 'utf8').replace(/__DBNAME__/g, dbName);
     console.log(`▶  Running: ${file}`);
     await conn.query(sql);
     console.log(`✅ Done: ${file}\n`);

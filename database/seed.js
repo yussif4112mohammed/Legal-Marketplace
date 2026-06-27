@@ -9,6 +9,7 @@ const bcrypt = require('bcryptjs');
 async function seed() {
   console.log('🌱 Seeding database...\n');
 
+  const sslConfig = process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : undefined;
   const db = await mysql.createConnection({
     host:     process.env.DB_HOST     || 'localhost',
     port:     Number(process.env.DB_PORT || 3306),
@@ -16,6 +17,7 @@ async function seed() {
     password: process.env.DB_PASSWORD || '',
     database: process.env.DB_NAME     || 'legal_marketplace',
     multipleStatements: true,
+    ...(sslConfig ? { ssl: sslConfig } : {}),
   });
 
   const hash = await bcrypt.hash('Password123!', 12);
