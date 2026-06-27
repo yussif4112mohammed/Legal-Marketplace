@@ -83,6 +83,12 @@ app.use(notFound);
 app.use(errorHandler);
 
 // ─── Start Server ─────────────────────────────────────────────
+// Vercel runs this file as a serverless function by importing the
+// exported `app` directly — it never calls this file with `node server.js`,
+// so app.listen() must NOT run there (it would try to bind a port on every
+// cold start, which serverless doesn't need and can error on warm reuse).
+// require.main === module is only true when you run `node src/server.js`
+// yourself (local dev, or a traditional host like Render/Railway/Koyeb).
 async function start() {
   try {
     await testConnection();
@@ -97,6 +103,8 @@ async function start() {
   }
 }
 
-start();
+if (require.main === module) {
+  start();
+}
 
 module.exports = app;
