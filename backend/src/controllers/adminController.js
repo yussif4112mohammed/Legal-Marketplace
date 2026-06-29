@@ -1,12 +1,6 @@
 const { query, queryOne, execute } = require('../config/database');
 const { success, error } = require('../utils/response');
-
-async function logAction(adminId, action, targetType, targetId, ip) {
-  await execute(
-    'INSERT INTO admin_logs (admin_id, action, target_type, target_id, ip_address) VALUES (?,?,?,?,?)',
-    [adminId, action, targetType, targetId, ip]
-  );
-}
+const { logAction } = require('../utils/activityLog');
 
 // ─── GET /api/admin/stats ─────────────────────────────────────
 async function getStats(req, res, next) {

@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const { query, queryOne, execute } = require('../config/database');
 const { signToken } = require('../utils/jwt');
 const { success, error } = require('../utils/response');
+const { logAction } = require('../utils/activityLog');
 
 // ─── POST /api/auth/register ─────────────────────────────────
 async function register(req, res, next) {
@@ -58,6 +59,8 @@ async function register(req, res, next) {
 
     const token = signToken({ userId, email, role });
 
+    logAction(userId, 'register', 'user', userId, req.ip);
+
     return success(res, {
       message: role === 'lawyer'
         ? 'Application submitted. You will be notified once approved.'
@@ -101,6 +104,8 @@ async function login(req, res, next) {
 
     const token = signToken({ userId: user.id, email: user.email, role: user.role });
 
+    logAction(user.id, 'login', 'user', user.id, req.ip);
+
     return success(res, {
       token,
       user: {
@@ -142,6 +147,35 @@ async function me(req, res, next) {
   }
 }
 
+// ─── PUT /api/auth/profile ────────────────────────────────────
+async function updateProfile(req, res, next) {
+  try {
+    const { firstName, lastName, phone } = req.body;
+    await execute(
+      'UPDATE users SET first_name = ?, last_name = ?, phone = ? WHERE id = ?',
+      [firstName, lastName, phone || null, req.user.userId]
+    );
+    const user = await queryOne(
+      'SELECT id, email, role, first_name, last_name, phone, avatar_url, created_at FROM users WHERE id = ?',
+      [req.user.userId]
+    );
+    return success(res, {
+      user: {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        firstName: user.first_name,
+        lastName: user.last_name,
+        phone: user.phone,
+        avatarUrl: user.avatar_url,
+        createdAt: user.created_at,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
 // ─── POST /api/auth/change-password ──────────────────────────
 async function changePassword(req, res, next) {
   try {
@@ -158,4 +192,4 @@ async function changePassword(req, res, next) {
   }
 }
 
-module.exports = { register, login, me, changePassword };
+module.exports = { register, login, me, updateProfile, changePassword };

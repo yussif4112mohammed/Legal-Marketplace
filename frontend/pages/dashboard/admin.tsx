@@ -1,14 +1,23 @@
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { Users, Scale, ClipboardCheck, Star, CheckCircle, XCircle, Loader2, BarChart3, AlertCircle } from 'lucide-react';
+import { Users, Scale, ClipboardCheck, Star, CheckCircle, XCircle, Loader2, BarChart3, AlertCircle, Clock, LogIn, UserPlus, ShieldCheck, ShieldOff, EyeOff, Eye } from 'lucide-react';
 import Navbar from '../../components/layout/Navbar';
 import { useAuth } from '../../hooks/useAuth';
 import { adminAPI } from '../../lib/api';
 import { format } from 'date-fns';
 import toast from 'react-hot-toast';
 
-type Tab = 'overview' | 'pending' | 'users' | 'reviews';
+type Tab = 'overview' | 'pending' | 'users' | 'reviews' | 'activity';
+
+const ACTION_META: Record<string, { label: string; icon: any }> = {
+  login:           { label: 'Logged in',          icon: LogIn },
+  register:        { label: 'Created account',    icon: UserPlus },
+  approve_lawyer:  { label: 'Approved lawyer',     icon: ShieldCheck },
+  reject_lawyer:   { label: 'Rejected lawyer',     icon: ShieldOff },
+  toggle_user:     { label: 'Changed user status', icon: Users },
+  toggle_review:   { label: 'Changed review status', icon: Eye },
+};
 
 export default function AdminDashboard() {
   const { user, loading: authLoading } = useAuth();
@@ -18,6 +27,7 @@ export default function AdminDashboard() {
   const [pending, setPending] = useState<any[]>([]);
   const [users,   setUsers]   = useState<any[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
+  const [activity,setActivity]= useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -30,6 +40,7 @@ export default function AdminDashboard() {
       adminAPI.getPendingLawyers().then(r => setPending(r.data.lawyers || [])),
       adminAPI.getUsers().then(r => setUsers(r.data.users || [])),
       adminAPI.getReviews().then(r => setReviews(r.data.reviews || [])),
+      adminAPI.getLogs().then(r => setActivity(r.data.logs || [])),
     ]).finally(() => setLoading(false));
   }, [user, authLoading]);
 
@@ -60,6 +71,7 @@ export default function AdminDashboard() {
     { id: 'pending',  label: `Pending (${pending.length})`, icon: AlertCircle },
     { id: 'users',    label: 'Users', icon: Users },
     { id: 'reviews',  label: 'Reviews', icon: Star },
+    { id: 'activity', label: 'Activity', icon: Clock },
   ];
 
   if (authLoading || loading) return (
@@ -223,6 +235,35 @@ export default function AdminDashboard() {
                   </button>
                 </div>
               ))}
+            </div>
+          )}
+          {/* Activity */}
+          {tab === 'activity' && (
+            <div className="card divide-y divide-gray-100">
+              {activity.length === 0 ? (
+                <div className="text-center py-16 text-gray-400">
+                  <Clock className="w-12 h-12 mx-auto mb-3 opacity-30" />
+                  <p>No activity recorded yet</p>
+                </div>
+              ) : (
+                activity.map((a: any) => {
+                  const meta = ACTION_META[a.action] || { label: a.action, icon: Clock };
+                  return (
+                    <div key={a.id} className="p-4 flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-lg bg-navy-50 text-navy-700 flex items-center justify-center flex-shrink-0">
+                        <meta.icon className="w-4 h-4" />
+                      </div>
+                      <div className="flex-1 text-sm">
+                        <span className="font-medium text-navy-950">{a.first_name} {a.last_name}</span>
+                        <span className="text-gray-500"> — {meta.label}</span>
+                      </div>
+                      <div className="text-xs text-gray-400 flex-shrink-0">
+                        {format(new Date(a.created_at), 'MMM d, h:mm a')}
+                      </div>
+                    </div>
+                  );
+                })
+              )}
             </div>
           )}
         </div>
